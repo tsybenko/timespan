@@ -4,9 +4,9 @@
     "version": "0.1.0",
     "license": "MIT",
     "autoload": {
-        "classmap": [
-            "src/"
-        ]
+        "psr-4": {
+            "Tsybenko\\TimeSpan\\": "src/"
+        }
     },
     "authors": [
         {
