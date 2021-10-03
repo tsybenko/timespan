@@ -49,4 +49,47 @@ class Timeline
     {
         return $this->end - $this->start;
     }
+
+    protected function resetStartAndEnd(): void
+    {
+        foreach ($this->spans as $span) {
+            if ($this->start > $span->getStart()) {
+                $this->start = $span->getStart();
+            }
+            if ($this->end < $span->getEnd()) {
+                $this->end = $span->getEnd();
+            }
+        }
+    }
+
+    /**
+     * @param static ...$timelines
+     * @return Span[]
+     */
+    public static function mergeSpans(self ...$timelines): array
+    {
+        /** @var Span[] $spans */
+        $spans = [];
+
+        foreach ($timelines as $timeline) {
+            $spans += $timeline->getSpans();
+        }
+
+        return $spans;
+    }
+
+    public function merge(self ...$timelines): static
+    {
+        $composition = new static();
+
+        foreach ($timelines as $timeline) {
+            $composition->spans = static::mergeSpans($timeline);
+        }
+
+        $composition->spans = Span::sort($composition->spans);
+
+        $composition->resetStartAndEnd();
+
+        return $composition;
+    }
 }
