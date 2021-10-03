@@ -274,4 +274,56 @@ class SpanTest extends TestCase
         $this->assertSame(10800, $sum);
     }
 
+    public function testCanCheckWhetherSpanStartsAfterTimestamp()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        $datetime = new DateTimeImmutable('08:00');
+        $timestamp = $datetime->getTimestamp();
+
+        $this->assertTrue($span->startsAfter($timestamp));
+    }
+
+    public function testCanCheckWhetherSpanStartsBeforeTimestamp()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        $datetime = new DateTimeImmutable('11:00');
+        $timestamp = $datetime->getTimestamp();
+
+        $this->assertTrue($span->startsBefore($timestamp));
+    }
+
+    public function testCanCheckWhetherSpanEndsAfterTimestamp()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        $datetime = new DateTimeImmutable('07:00');
+        $timestamp = $datetime->getTimestamp();
+
+        $this->assertTrue($span->endsAfter($timestamp));
+    }
+
+    public function testCanCheckWhetherSpanEndsBeforeTimestamp()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        $datetime = new DateTimeImmutable('13:00');
+        $timestamp = $datetime->getTimestamp();
+
+        $this->assertTrue($span->endsBefore($timestamp));
+    }
+
 }

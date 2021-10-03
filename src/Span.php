@@ -134,6 +134,26 @@ class Span
             : $this->start <= $span->end;
     }
 
+    public function startsAfter(int $timestamp): bool
+    {
+        return $this->start > $timestamp;
+    }
+
+    public function startsBefore(int $timestamp): bool
+    {
+        return $this->start < $timestamp;
+    }
+
+    public function endsAfter(int $timestamp): bool
+    {
+        return $this->end > $timestamp;
+    }
+
+    public function endsBefore(int $timestamp): bool
+    {
+        return $this->end < $timestamp;
+    }
+
     public static function sumDurations(self ...$spans): int
     {
         return array_reduce($spans, function($sum, $span) {
