@@ -10,6 +10,16 @@ class Timeline
     /** @var Span[] */
     protected array $spans = [];
 
+    public function getStart(): int
+    {
+        return $this->start;
+    }
+
+    public function getEnd(): int
+    {
+        return $this->end;
+    }
+
     /**
      * @return Span[]
      */
