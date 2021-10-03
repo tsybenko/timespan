@@ -32,20 +32,18 @@ class Timeline
     {
         $this->spans[] = $span;
 
-        if ($this->start > $span->getStart()) {
+        if ($this->start === 0 || $this->start > $span->getStart()) {
             $this->start = $span->getStart();
         }
 
-        if ($this->end < $span->getEnd()) {
+        if ($this->end === 0 || $this->end < $span->getEnd()) {
             $this->end = $span->getEnd();
         }
 
-        uasort($this->spans, function ($a, $b) {
-            return $a->getStart() <=> $b->getStart();
-        });
+        return $this->spans = Span::sort($this->spans);
     }
 
-    public function duration(): int
+    public function getDuration(): int
     {
         return $this->end - $this->start;
     }
@@ -53,10 +51,10 @@ class Timeline
     protected function resetStartAndEnd(): void
     {
         foreach ($this->spans as $span) {
-            if ($this->start > $span->getStart()) {
+            if ($this->start === 0 || $this->start > $span->getStart()) {
                 $this->start = $span->getStart();
             }
-            if ($this->end < $span->getEnd()) {
+            if ($this->end === 0 || $this->end < $span->getEnd()) {
                 $this->end = $span->getEnd();
             }
         }
@@ -83,7 +81,9 @@ class Timeline
         $composition = new static();
 
         foreach ($timelines as $timeline) {
-            $composition->spans = static::mergeSpans($timeline);
+            foreach (static::mergeSpans($timeline) as $span) {
+                $composition->add($span);
+            }
         }
 
         $composition->spans = Span::sort($composition->spans);
