@@ -10,17 +10,29 @@ class Timeline
     /** @var Span[] */
     protected array $spans = [];
 
+    /**
+     * Returns starting timestamp of the timeline
+     *
+     * @return int
+     */
     public function getStart(): int
     {
         return $this->start;
     }
 
+    /**
+     * Returns ending timestamp of the timeline
+     *
+     * @return int
+     */
     public function getEnd(): int
     {
         return $this->end;
     }
 
     /**
+     * Returns spans of the timeline
+     *
      * @return Span[]
      */
     public function getSpans(): array
@@ -28,6 +40,12 @@ class Timeline
         return $this->spans;
     }
 
+    /**
+     * Adds a span on the timeline
+     *
+     * @param Span $span
+     * @return Span[]
+     */
     public function add(Span $span)
     {
         $this->spans[] = $span;
@@ -43,11 +61,19 @@ class Timeline
         return $this->spans = Span::sort($this->spans);
     }
 
+    /**
+     * Returns duration of the timeline
+     *
+     * @return int
+     */
     public function getDuration(): int
     {
         return $this->end - $this->start;
     }
 
+    /**
+     * Resets start and end of the timeline
+     */
     protected function resetStartAndEnd(): void
     {
         foreach ($this->spans as $span) {
@@ -61,6 +87,8 @@ class Timeline
     }
 
     /**
+     * Returns array of merged spans of passed timelines
+     *
      * @param static ...$timelines
      * @return Span[]
      */
@@ -76,6 +104,12 @@ class Timeline
         return $spans;
     }
 
+    /**
+     * Returns a new Timeline by merging current timeline with passed timelines.
+     *
+     * @param Timeline ...$timelines
+     * @return static
+     */
     public function merge(self ...$timelines): static
     {
         $composition = new static();
@@ -94,6 +128,8 @@ class Timeline
     }
 
     /**
+     * Returns a new Timeline pre-filled with generated spans, starting from $start
+     *
      * @param int $start
      * @param int $duration
      * @param int $amount
@@ -114,6 +150,8 @@ class Timeline
     }
 
     /**
+     * Returns a new Timeline pre-filled with generated spans, ending from $end
+     *
      * @param int $end
      * @param int $duration
      * @param int $amount
