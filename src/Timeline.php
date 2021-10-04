@@ -92,4 +92,44 @@ class Timeline
 
         return $composition;
     }
+
+    /**
+     * @param int $start
+     * @param int $duration
+     * @param int $amount
+     * @param int $gap
+     * @return static
+     */
+    public static function generateFrom(int $start, int $duration, int $amount = 1, int $gap = 0): static
+    {
+        $timeline = new static();
+
+        for ($i = 0; $i < $amount; $i++) {
+            $span = new Span($start, $start + $duration);
+            $timeline->add($span);
+            $start += $duration + $gap;
+        }
+
+        return $timeline;
+    }
+
+    /**
+     * @param int $end
+     * @param int $duration
+     * @param int $amount
+     * @param int $gap
+     * @return static
+     */
+    public static function generateTo(int $end, int $duration, int $amount = 1, int $gap = 0): static
+    {
+        $timeline = new static();
+
+        for ($i = $amount; $i > 0; $i--) {
+            $span = new Span($end - $duration, $end);
+            $timeline->add($span);
+            $end -= $duration + $gap;
+        }
+
+        return $timeline;
+    }
 }

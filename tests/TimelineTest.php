@@ -63,4 +63,26 @@ class TimelineTest extends TestCase
         $this->assertSame($firstSpan, $resultSpans[array_key_first($resultSpans)]);
         $this->assertSame($lastSpan, $resultSpans[array_key_last($resultSpans)]);
     }
+
+    public function testCanGenerateFromTimestamp()
+    {
+        $start = new DateTimeImmutable('09:00');
+
+        $timeline = Timeline::generateFrom($start->getTimestamp(), 3600, 5, 1800);
+        $spans = $timeline->getSpans();
+
+        $this->assertCount(5, $spans);
+        $this->assertSame($start->getTimestamp(), $spans[array_key_first($spans)]->getStart());
+    }
+
+    public function testCanGenerateToTimestamp()
+    {
+        $end = new DateTimeImmutable('09:00');
+
+        $timeline = Timeline::generateTo($end->getTimestamp(), 3600, 5, 1800);
+        $spans = $timeline->getSpans();
+
+        $this->assertCount(5, $spans);
+        $this->assertSame($end->getTimestamp(), $spans[array_key_last($spans)]->getEnd());
+    }
 }
