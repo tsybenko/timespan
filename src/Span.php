@@ -7,7 +7,6 @@ use DatePeriod;
 use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
-use Generator;
 use InvalidArgumentException;
 
 class Span
@@ -118,13 +117,6 @@ class Span
         return $this->gap($span) > 0;
     }
 
-    public function iterateGaps(self ...$spans): Generator
-    {
-        foreach ($spans as $span) {
-            yield $this->gap($span);
-        }
-    }
-
     public function overlaps(self $span): bool
     {
         return $this->start < $span->start
@@ -150,43 +142,6 @@ class Span
     public function endsBefore(int $timestamp): bool
     {
         return $this->end < $timestamp;
-    }
-
-    public static function sumDurations(self ...$spans): int
-    {
-        return array_reduce($spans, function($sum, self $span) {
-            $sum += $span->getDuration();
-            return $sum;
-        }, 0);
-    }
-
-    public static function sumGaps(self ...$spans): int
-    {
-        $sum = 0;
-
-        for ($i = 0; $i < count($spans) - 1; $i++) {
-            if (! isset($spans[$i + 1])) break;
-
-            $currentSpan = $spans[$i];
-            $nextSpan = $spans[$i + 1];
-
-            $sum += $currentSpan->gap($nextSpan);
-        }
-
-        return $sum;
-    }
-
-    /**
-     * @param static[] $spans
-     * @return static[]
-     */
-    public static function findBetween(self $a, self $b, array $spans): array
-    {
-        $composition = new static($a->getStart(), $b->getStart());
-
-        return array_filter($spans, function ($span) use ($composition) {
-            return $composition->overlaps($span);
-        });
     }
 
     public function __toString(): string

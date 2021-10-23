@@ -140,33 +140,6 @@ class SpanTest extends TestCase
         $this->assertFalse($spans[2]->overlaps($spans[0]));
     }
 
-    /**
-     * @depends testCanBeCreatedFromDatetime
-     */
-    public function testCanIterateGaps()
-    {
-        /** @var Span[] $spans */
-        $spans = [
-            Span::fromDateTime(
-                new DateTimeImmutable('09:00'),
-                new DateTimeImmutable('11:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('11:00'),
-                new DateTimeImmutable('12:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('13:00'),
-                new DateTimeImmutable('15:00')
-            ),
-        ];
-
-        $generator = $spans[0]->iterateGaps($spans[1], $spans[2]);
-
-        $this->assertInstanceOf(Generator::class, $generator);
-        $this->assertIsInt($generator->current());
-    }
-
     public function testCanCalculateGapBetweenTwoSpans()
     {
         $spanA = Span::fromDateTime(
@@ -195,83 +168,6 @@ class SpanTest extends TestCase
         );
 
         $this->assertSame(0, $spanB->gap($spanA));
-    }
-
-    public function testCanFindSpansBetween()
-    {
-        $a = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
-        $b = Span::fromDateTime(
-            new DateTimeImmutable('16:00'),
-            new DateTimeImmutable('17:00')
-        );
-
-        $spans = [
-            Span::fromDateTime(
-                new DateTimeImmutable('11:00'),
-                new DateTimeImmutable('12:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('12:00'),
-                new DateTimeImmutable('13:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('13:00'),
-                new DateTimeImmutable('14:00')
-            ),
-        ];
-
-        $found = Span::findBetween($a, $b, $spans);
-
-        $this->assertIsArray($found);
-        $this->assertCount(3, $found);
-        $this->assertSame($spans[0], $found[0]);
-        $this->assertSame($spans[2], $found[2]);
-    }
-
-    public function testCanSumDurations()
-    {
-        $spans = [
-            Span::fromDateTime(
-                new DateTimeImmutable('08:00'),
-                new DateTimeImmutable('12:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('13:00'),
-                new DateTimeImmutable('17:00')
-            ),
-        ];
-
-        $sum = Span::sumDurations(...$spans);
-
-        $this->assertIsInt($sum);
-        $this->assertSame(28800, $sum);
-    }
-
-    public function testCanSumGapsBetween()
-    {
-        $spans = [
-            Span::fromDateTime(
-                new DateTimeImmutable('09:00'),
-                new DateTimeImmutable('10:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('11:00'),
-                new DateTimeImmutable('12:00')
-            ),
-            Span::fromDateTime(
-                new DateTimeImmutable('14:00'),
-                new DateTimeImmutable('15:00')
-            ),
-        ];
-
-        $sum = Span::sumGaps(...$spans);
-
-        $this->assertIsInt($sum);
-        $this->assertSame(10800, $sum);
     }
 
     public function testCanCheckWhetherSpanStartsAfterTimestamp()
