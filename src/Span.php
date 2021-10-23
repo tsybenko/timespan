@@ -59,7 +59,7 @@ class Span
         return json_encode($this->toArray());
     }
 
-    public function toString()
+    public function toString(): string
     {
         return sprintf(
             '%s -> %s',
@@ -79,16 +79,14 @@ class Span
     }
 
     /**
-     * @param Span[] $spans
-     * @return Span[]
+     * @param static[] $spans
+     * @return static[]
      */
     public static function sort(array $spans): array
     {
         $spans = array_merge([], $spans);
 
-        uasort($spans, function ($a, $b) {
-            /** @var Span $a */
-            /** @var Span $b */
+        uasort($spans, function (self $a, self $b) {
             return $a->getStart() <=> $b->getStart();
         });
 
@@ -179,8 +177,8 @@ class Span
     }
 
     /**
-     * @param Span[] $spans
-     * @return Span[]
+     * @param static[] $spans
+     * @return static[]
      */
     public static function findBetween(self $a, self $b, array $spans): array
     {
