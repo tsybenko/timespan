@@ -71,4 +71,23 @@ class SpanAggregator
             return $composition->overlaps($span);
         });
     }
+
+    public static function findMostDurable(Span ...$spans): Span
+    {
+        $candidate = $spans[0];
+
+        if (count($spans) === 1) return $candidate;
+
+        // Iterate from the next index for better performance
+        for ($i = 1; $i < count($spans); $i++) {
+            $span = $spans[$i];
+
+            if ($candidate->getDuration() > $span->getDuration()) continue;
+
+            $candidate = $span;
+        }
+
+        return $candidate;
+    }
+
 }

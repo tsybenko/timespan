@@ -108,4 +108,25 @@ class SpanAggregatorTest extends TestCase
         $this->assertSame($spans[2], $found[2]);
     }
 
+    public function testCanFindMostDurable()
+    {
+        $spans = [
+            Span::fromDateTime(
+                new DateTimeImmutable('11:00'),
+                new DateTimeImmutable('12:00')
+            ),
+            Span::fromDateTime(
+                new DateTimeImmutable('12:00'),
+                new DateTimeImmutable('14:00')
+            ),
+            Span::fromDateTime(
+                new DateTimeImmutable('14:00'),
+                new DateTimeImmutable('17:00')
+            ),
+        ];
+
+        $mostDurable = SpanAggregator::findMostDurable(...$spans);
+        $this->assertSame($spans[2], $mostDurable);
+    }
+
 }
