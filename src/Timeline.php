@@ -58,7 +58,7 @@ class Timeline
             $this->end = $span->getEnd();
         }
 
-        return $this->spans = Span::sort($this->spans);
+        return $this->spans = SpanAggregator::sort($this->spans);
     }
 
     /**
@@ -120,7 +120,7 @@ class Timeline
             }
         }
 
-        $composition->spans = Span::sort($composition->spans);
+        $composition->spans = SpanAggregator::sort($composition->spans);
 
         $composition->resetStartAndEnd();
 

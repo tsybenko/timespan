@@ -77,21 +77,6 @@ class Span implements SpanInterface
         return $this->end;
     }
 
-    /**
-     * @param static[] $spans
-     * @return static[]
-     */
-    public static function sort(array $spans): array
-    {
-        $spans = array_merge([], $spans);
-
-        uasort($spans, function (self $a, self $b) {
-            return $a->getStart() <=> $b->getStart();
-        });
-
-        return $spans;
-    }
-
     public function getDuration(): int
     {
         return $this->end - $this->start;

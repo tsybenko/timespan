@@ -13,6 +13,21 @@ class SpanAggregator
         $this->span = $span;
     }
 
+    /**
+     * @param Span[] $spans
+     * @return Span[]
+     */
+    public static function sort(array $spans): array
+    {
+        $spans = array_merge([], $spans);
+
+        uasort($spans, function (Span $a, Span $b) {
+            return $a->getStart() <=> $b->getStart();
+        });
+
+        return $spans;
+    }
+
     public function iterateGaps(Span ...$spans): Generator
     {
         foreach ($spans as $span) {
