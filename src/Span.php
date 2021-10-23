@@ -93,7 +93,7 @@ class Span
         return $spans;
     }
 
-    public function duration(): int
+    public function getDuration(): int
     {
         return $this->end - $this->start;
     }
@@ -154,8 +154,8 @@ class Span
 
     public static function sumDurations(self ...$spans): int
     {
-        return array_reduce($spans, function($sum, $span) {
-            $sum += $span->duration();
+        return array_reduce($spans, function($sum, self $span) {
+            $sum += $span->getDuration();
             return $sum;
         }, 0);
     }

@@ -64,7 +64,7 @@ class SpanTest extends TestCase
             new DateTimeImmutable('11:00')
         );
 
-        $this->assertSame(7200, $span->duration());
+        $this->assertSame(7200, $span->getDuration());
     }
 
     /**
