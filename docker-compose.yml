@@ -9,6 +9,7 @@ services:
       - .:/app
   php:
     image: php:8-cli
+    tty: true
     volumes:
       - .:/app
     working_dir: /app
