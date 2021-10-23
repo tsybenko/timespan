@@ -9,7 +9,7 @@ use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
 
-class Span
+class Span implements SpanInterface
 {
     protected int $start;
     protected int $end;
@@ -97,7 +97,7 @@ class Span
         return $this->end - $this->start;
     }
 
-    public function gap(self $span): int
+    public function gap(SpanInterface $span): int
     {
         if ($this->start === $span->start && $this->end === $span->end) {
             return 0;
@@ -112,12 +112,12 @@ class Span
             : $span->start - $this->end;
     }
 
-    public function hasGap(self $span): bool
+    public function hasGap(SpanInterface $span): bool
     {
         return $this->gap($span) > 0;
     }
 
-    public function overlaps(self $span): bool
+    public function overlaps(SpanInterface $span): bool
     {
         return $this->start < $span->start
             ? $span->start <= $this->end
