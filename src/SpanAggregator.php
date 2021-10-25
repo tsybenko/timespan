@@ -65,11 +65,15 @@ class SpanAggregator
      */
     public static function findBetween(Span $a, Span $b, array $spans): array
     {
-        $composition = new Span($a->getStart(), $b->getStart());
+        $items = [];
 
-        return array_filter($spans, function ($span) use ($composition) {
-            return $composition->overlaps($span);
-        });
+        foreach ($spans as $span) {
+            if (static::isNotBetween($a, $b, $span)) continue;
+
+            $items[] = $span;
+        }
+
+        return $items;
     }
 
     public static function findMostDurable(Span ...$spans): Span
@@ -88,6 +92,16 @@ class SpanAggregator
         }
 
         return $candidate;
+    }
+
+    public static function isBetween(Span $a, Span $b, Span $target): bool
+    {
+        return $a->getEnd() <= $target->getStart() && $target->getEnd() <= $b->getStart();
+    }
+
+    public static function isNotBetween(Span $a, Span $b, Span $target): bool
+    {
+        return ! static::isBetween($a, $b, $target);
     }
 
 }

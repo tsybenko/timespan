@@ -129,4 +129,24 @@ class SpanAggregatorTest extends TestCase
         $this->assertSame($spans[2], $mostDurable);
     }
 
+    public function testCanCheckIsTargetBetweenTwoSpans()
+    {
+        $a = Span::fromDateTime(
+            new DateTimeImmutable('11:00'),
+            new DateTimeImmutable('12:00')
+        );
+
+        $b = Span::fromDateTime(
+            new DateTimeImmutable('14:00'),
+            new DateTimeImmutable('17:00')
+        );
+
+        $target = Span::fromDateTime(
+            new DateTimeImmutable('12:00'),
+            new DateTimeImmutable('14:00')
+        );
+
+        $this->assertTrue(SpanAggregator::isBetween($a, $b, $target));
+    }
+
 }
