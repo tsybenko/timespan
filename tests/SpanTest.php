@@ -251,4 +251,29 @@ class SpanTest extends TestCase
         }
     }
 
+    public function testCanCheckWhetherSpanContainsParticularTimestamp()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        $half = ($span->getStart() + $span->getEnd()) / 2;
+
+        $this->assertTrue($span->contains($span->getStart()));
+        $this->assertTrue($span->contains($span->getEnd()));
+        $this->assertTrue($span->contains($half));
+    }
+
+    public function testThrowsExceptionWhenTimestampIsNotInSpanWhenSplittingByTimestamp() {
+        $this->expectException(InvalidArgumentException::class);
+
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        $span->splitTimestamp($span->getStart() - 100);
+    }
+
 }

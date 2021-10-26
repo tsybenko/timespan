@@ -111,11 +111,22 @@ class Span implements SpanInterface
 
     /**
      * @param int $timestamp
+     * @return bool
+     */
+    public function contains(int $timestamp): bool
+    {
+        return $this->start <= $timestamp && $this->end >= $timestamp;
+    }
+
+    /**
+     * @param int $timestamp
      * @return Span[]
      */
     public function splitTimestamp(int $timestamp): array
     {
-        // @todo Cover incorrect timestamp case
+        if (! $this->contains($timestamp)) {
+            throw new InvalidArgumentException("The span does not contain the passed timestamp");
+        }
 
         return [
             static::make($this->start, $timestamp),
