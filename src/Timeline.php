@@ -98,7 +98,7 @@ class Timeline
         $spans = [];
 
         foreach ($timelines as $timeline) {
-            $spans += $timeline->getSpans();
+            $spans = [...$spans, ...$timeline->getSpans()];
         }
 
         return $spans;
@@ -112,19 +112,14 @@ class Timeline
      */
     public function merge(self ...$timelines): static
     {
-        $composition = new static();
+        $timeline = new static();
+        $spans = static::mergeSpans(...$timelines);
 
-        foreach ($timelines as $timeline) {
-            foreach (static::mergeSpans($timeline) as $span) {
-                $composition->add($span);
-            }
+        foreach ($spans as $span) {
+            $timeline->add($span);
         }
 
-        $composition->spans = SpanAggregator::sort($composition->spans);
-
-        $composition->resetStartAndEnd();
-
-        return $composition;
+        return $timeline;
     }
 
     /**
