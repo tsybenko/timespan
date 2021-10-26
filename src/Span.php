@@ -123,6 +123,10 @@ class Span implements SpanInterface
         ];
     }
 
+    /**
+     * @param int $count
+     * @return Span[]
+     */
     public function splitParts(int $count): array
     {
         if ($count < 2) {
