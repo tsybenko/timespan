@@ -222,6 +222,20 @@ class SpanTest extends TestCase
         $this->assertTrue($span->endsBefore($timestamp));
     }
 
+    public function testCanBeSplittedByTimestamp()
+    {
+        $start = new DateTimeImmutable('09:00');
+        $end = new DateTimeImmutable('10:00');
+        $half = ($start->getTimestamp() + $end->getTimestamp()) / 2;
+
+        $span = Span::fromDateTime($start, $end);
+        $parts = $span->splitTimestamp($half);
+
+        $this->assertCount(2, $parts);
+        $this->assertEquals($start->getTimestamp(), $parts[0]->getStart());
+        $this->assertEquals($end->getTimestamp(), $parts[1]->getEnd());
+    }
+
     public function testCanBeSplittedToEqualParts()
     {
         $span = Span::fromDateTime(

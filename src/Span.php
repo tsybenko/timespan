@@ -109,6 +109,20 @@ class Span implements SpanInterface
             : $this->start <= $span->end;
     }
 
+    /**
+     * @param int $timestamp
+     * @return Span[]
+     */
+    public function splitTimestamp(int $timestamp): array
+    {
+        // @todo Cover incorrect timestamp case
+
+        return [
+            static::make($this->start, $timestamp),
+            static::make($timestamp, $this->end)
+        ];
+    }
+
     public function splitParts(int $count): array
     {
         if ($count < 2) {
