@@ -82,6 +82,11 @@ class Span implements SpanInterface
         return $this->end - $this->start;
     }
 
+    public function getMiddle(): int
+    {
+        return ($this->start + $this->end) / 2;
+    }
+
     public function gap(SpanInterface $span): int
     {
         if ($this->start === $span->getStart() && $this->end === $span->getEnd()) {

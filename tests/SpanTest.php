@@ -276,4 +276,17 @@ class SpanTest extends TestCase
         $span->splitTimestamp($span->getStart() - 100);
     }
 
+    public function testCanGetMiddleTimestamp()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('11:00')
+        );
+
+        $middle = new DateTimeImmutable('10:00');
+
+        $this->assertSame($middle->getTimestamp(), $span->getMiddle());
+
+    }
+
 }
