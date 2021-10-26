@@ -109,6 +109,25 @@ class Span implements SpanInterface
             : $this->start <= $span->end;
     }
 
+    public function splitParts(int $count): array
+    {
+        if ($count < 2) {
+            return [$this];
+        }
+
+        $start = $this->start;
+        $fraction = $this->getDuration() / $count;
+        $parts = [];
+
+        while (count($parts) < $count) {
+            $end = $start + $fraction;
+            $parts[] = static::make($start, $end);
+            $start = $end;
+        }
+
+        return $parts;
+    }
+
     public function startsAfter(int $timestamp): bool
     {
         return $this->start > $timestamp;
