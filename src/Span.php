@@ -84,7 +84,7 @@ class Span implements SpanInterface
 
     public function gap(SpanInterface $span): int
     {
-        if ($this->start === $span->start && $this->end === $span->end) {
+        if ($this->start === $span->getStart() && $this->end === $span->getEnd()) {
             return 0;
         }
 
@@ -92,9 +92,9 @@ class Span implements SpanInterface
             return 0;
         }
 
-        return $this->start > $span->start
-            ? $this->start - $span->end
-            : $span->start - $this->end;
+        return $this->start > $span->getStart()
+            ? $this->start - $span->getEnd()
+            : $span->getStart() - $this->end;
     }
 
     public function hasGap(SpanInterface $span): bool
@@ -104,9 +104,9 @@ class Span implements SpanInterface
 
     public function overlaps(SpanInterface $span): bool
     {
-        return $this->start < $span->start
-            ? $span->start <= $this->end
-            : $this->start <= $span->end;
+        return $this->start < $span->getStart()
+            ? $span->getStart() <= $this->end
+            : $this->start <= $span->getEnd();
     }
 
     /**
