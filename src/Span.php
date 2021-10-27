@@ -231,4 +231,18 @@ class Span implements SpanInterface
     {
         return $this->toString();
     }
+
+    public function __serialize(): array
+    {
+        return [
+            'start' => $this->start,
+            'end' => $this->end,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->start = $data['start'];
+        $this->end = $data['end'];
+    }
 }
