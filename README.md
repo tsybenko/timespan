@@ -27,26 +27,36 @@ $span = Span::make(
 /** Can be initialized using DateTimeInterface objects */
 $span = Span::fromDateTime($start, $end);
 
-print_r([
-    'start' => $span->getStart(),
-    'end' => $span->getEnd(),
+print_r($span->toArray() + [
     'duration' => $span->getDuration(),
+    'middle' => $span->getMiddle(),
     'json' => $span->toJson(),
+    'string' => $span->toString(),
 ]);
 
-/** Creates three spans from a span */
+/** Create three spans from a span */
 list($part1, $part2, $part3) = $span->splitParts(3);
 
-/** Merges parts back into a single span */
+/** Merge parts back into a single span */
 $span = $part1->merge($part2)->merge($part3);
 
-/** Returns a size of a gap between passed parts (spans) */
+/** Get size of a gap between passed parts (spans) */
 $gap = $part1->gap($part3);
 
 print_r($gap === $part2->getDuration()); // true
+print_r($part1->hasGap($part3)); // true
 
 /** Creates date period with 30 minutes interval from the span */
 $dateInterval = new DateInterval('PT30M'); // 30 minutes interval
-$datePeriod = $span->toDatePeriod($dateInterval); 
+$datePeriod = $span->toDatePeriod($dateInterval);
+
+/** Split span into two parts by timestamp */
+try {
+    $timestamp = $part2->getStart();
+    $parts = $span->splitTimestamp($timestamp);
+    print_r($parts);
+} catch (InvalidArgumentException $exception) {
+    echo $exception->getMessage();
+}
 
 ```
