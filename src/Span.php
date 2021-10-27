@@ -45,6 +45,11 @@ class Span implements SpanInterface
         return new DatePeriod($start, $interval, $end);
     }
 
+    /**
+     * Returns array representation of the span
+     *
+     * @return array{start: int, end: int}
+     */
     public function toArray(): array
     {
         return [
