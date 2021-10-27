@@ -289,4 +289,22 @@ class SpanTest extends TestCase
 
     }
 
+    public function testCanBeMerged()
+    {
+        $a = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('11:00')
+        );
+
+        $b = Span::fromDateTime(
+            new DateTimeImmutable('10:00'),
+            new DateTimeImmutable('13:00')
+        );
+
+        $c = $a->merge($b);
+
+        $this->assertSame($a->getStart(), $c->getStart());
+        $this->assertSame($b->getEnd(), $c->getEnd());
+    }
+
 }
