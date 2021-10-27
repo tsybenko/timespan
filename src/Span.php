@@ -95,6 +95,10 @@ class Span implements SpanInterface
      */
     public function getFractionDuration(int $fractions): float
     {
+        if ($fractions < 0) {
+            throw new InvalidArgumentException('Fractions amount must be an unsigned integer');
+        }
+
         return $this->getDuration() / $fractions;
     }
 
