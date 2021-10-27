@@ -5,12 +5,9 @@
 The one primitive type Span operates with, is an integer. 
 The integer value commonly represents a timestamp.
 ```php
-require_once '../vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Tsybenko\TimeSpan\Span;
-
-// The one primitive type Span operates with, is an integer
-// The integer value represents a timestamp
 
 $start = new DateTimeImmutable('10:00');
 $end = new DateTimeImmutable('12:30');
