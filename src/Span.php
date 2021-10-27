@@ -87,6 +87,17 @@ class Span implements SpanInterface
         return ($this->start + $this->end) / 2;
     }
 
+    /**
+     * Returns duration of one fraction after dividing the span in $fractions count
+     *
+     * @param int $fractions
+     * @return float
+     */
+    public function getFractionDuration(int $fractions): float
+    {
+        return $this->getDuration() / $fractions;
+    }
+
     public function gap(SpanInterface $span): int
     {
         if ($this->start === $span->getStart() && $this->end === $span->getEnd()) {
@@ -150,11 +161,12 @@ class Span implements SpanInterface
         }
 
         $start = $this->start;
-        $fraction = $this->getDuration() / $count;
+        $fractionDuration = $this->getFractionDuration($count);
+
         $parts = [];
 
         while (count($parts) < $count) {
-            $end = $start + $fraction;
+            $end = $start + $fractionDuration;
             $parts[] = static::make($start, $end);
             $start = $end;
         }

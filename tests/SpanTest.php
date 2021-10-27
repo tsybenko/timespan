@@ -307,4 +307,10 @@ class SpanTest extends TestCase
         $this->assertSame($b->getEnd(), $c->getEnd());
     }
 
+    public function testCanGetFractionDuration()
+    {
+        $this->assertSame(10.0, Span::make(0, 20)->getFractionDuration(2));
+        $this->assertSame(2.5, Span::make(10, 20)->getFractionDuration(4));
+    }
+
 }
