@@ -58,6 +58,16 @@ class Span implements SpanInterface
         ];
     }
 
+    /**
+     * Returns array of main primitives: start, end
+     *
+     * @return array{0: int, 1: int}
+     */
+    public function toPrimitives(): array
+    {
+        return [$this->start, $this->end];
+    }
+
     public function toJson(): string
     {
         return json_encode($this->toArray());

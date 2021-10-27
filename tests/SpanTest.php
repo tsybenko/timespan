@@ -313,4 +313,17 @@ class SpanTest extends TestCase
         $this->assertSame(2.5, Span::make(10, 20)->getFractionDuration(4));
     }
 
+    public function testCanBeConvertedToPrimitives()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('11:00')
+        );
+
+        list($start, $end) = $span->toPrimitives();
+
+        $this->assertSame($span->getStart(), $start);
+        $this->assertSame($span->getEnd(), $end);
+    }
+
 }
