@@ -39,6 +39,7 @@ list($part1, $part2, $part3) = $span->splitParts(3);
 
 /** Merge parts back into a single span */
 $span = $part1->merge($part2)->merge($part3);
+// $span = $part1->merge($part2, $part3);
 
 /** Get size of a gap between passed parts (spans) */
 $gap = $part1->gap($part3);
