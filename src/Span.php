@@ -170,13 +170,19 @@ class Span implements SpanInterface
     }
 
     /**
+     * Returns array of parts (spans) the span was splitted into
+     *
+     * Warning!
+     * Splitting of the span into odd amount of parts is not an accurate operation
+     * because of float to integer type conversion
+     *
      * @param int $count
      * @return Span[]
      */
     public function splitParts(int $count): array
     {
         if ($count < 2) {
-            return [$this];
+            throw new InvalidArgumentException('Cannot split a span into less than 2 parts');
         }
 
         $start = $this->start;

@@ -243,7 +243,7 @@ class SpanTest extends TestCase
             new DateTimeImmutable('10:00')
         );
 
-        foreach ([1, 2, 3, 5, 7, 10] as $count) {
+        foreach ([2, 3, 5, 7, 10] as $count) {
             $parts = $span->splitParts($count);
             $this->assertCount($count, $parts);
             $this->assertEquals($span->getStart(), $parts[0]->getStart());
