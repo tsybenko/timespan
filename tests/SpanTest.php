@@ -5,6 +5,37 @@ use Tsybenko\TimeSpan\Span;
 
 class SpanTest extends TestCase
 {
+    public function getTimestamp(): int
+    {
+        return 1635368400;
+    }
+
+    public function provideDateTime()
+    {
+        return [
+            [
+                new DateTimeImmutable('09:00'),
+                new DateTimeImmutable('11:00')
+            ]
+        ];
+    }
+
+    /**
+     * @return Span[]
+     */
+    public function provideSpan(): array
+    {
+//        $ts = $this->getTimestamp();
+//        return Span::make($ts, $ts + 7200);
+
+        $start = new DateTimeImmutable('09:00');
+        $end = new DateTimeImmutable('11:00');
+
+        return [
+            [Span::fromDateTime($start, $end)]
+        ];
+    }
+
     public function testThrowsExceptionWhenEndLessThanStart()
     {
         $this->expectException(InvalidArgumentException::class);
@@ -15,11 +46,11 @@ class SpanTest extends TestCase
         new Span($start, $end);
     }
 
-    public function testCanBeCreatedFromTimestamp()
+    /**
+     * @dataProvider provideDateTime
+     */
+    public function testCanBeCreatedFromTimestamp($start, $end)
     {
-        $start = new DateTimeImmutable('09:00');
-        $end = new DateTimeImmutable('11:00');
-
         $this->assertInstanceOf(
             Span::class,
             new Span(
@@ -29,11 +60,11 @@ class SpanTest extends TestCase
         );
     }
 
-    public function testCanBeCreatedFromStaticConstructor()
+    /**
+     * @dataProvider provideDateTime
+     */
+    public function testCanBeCreatedFromStaticConstructor($start, $end)
     {
-        $start = new DateTimeImmutable('09:00');
-        $end = new DateTimeImmutable('11:00');
-
         $this->assertInstanceOf(
             Span::class,
             Span::make(
@@ -43,40 +74,32 @@ class SpanTest extends TestCase
         );
     }
 
-    public function testCanBeCreatedFromDatetime()
+    /**
+     * @dataProvider provideDateTime
+     */
+    public function testCanBeCreatedFromDatetime($start, $end)
     {
         $this->assertInstanceOf(
             Span::class,
-            Span::fromDateTime(
-                new DateTimeImmutable('09:00'),
-                new DateTimeImmutable('11:00')
-            )
+            Span::fromDateTime($start, $end)
         );
     }
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     * @dataProvider provideSpan
      */
-    public function testCanCalculateDuration()
+    public function testCanCalculateDuration($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
-
         $this->assertSame(7200, $span->getDuration());
     }
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     * @dataProvider provideSpan
      */
-    public function testCanBeConvertedToDatePeriod()
+    public function testCanBeConvertedToDatePeriod($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
-
         $interval = new DateInterval('PT1H');
 
         $this->assertInstanceOf(DatePeriod::class, $span->toDatePeriod($interval));
@@ -84,14 +107,10 @@ class SpanTest extends TestCase
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     * @dataProvider provideSpan
      */
-    public function testCanBeConvertedToArray()
+    public function testCanBeConvertedToArray($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
-
         $arr = $span->toArray();
 
         $this->assertIsArray($span->toArray());
@@ -101,14 +120,10 @@ class SpanTest extends TestCase
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     * @dataProvider provideSpan
      */
-    public function testCanBeConvertedToJson()
+    public function testCanBeConvertedToJson($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
-
         $this->assertJson($span->toJson());
     }
 
@@ -170,62 +185,55 @@ class SpanTest extends TestCase
         $this->assertSame(0, $spanB->gap($spanA));
     }
 
-    public function testCanCheckWhetherSpanStartsAfterTimestamp()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanCheckWhetherSpanStartsAfterTimestamp($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
         $datetime = new DateTimeImmutable('08:00');
         $timestamp = $datetime->getTimestamp();
 
         $this->assertTrue($span->startsAfter($timestamp));
     }
 
-    public function testCanCheckWhetherSpanStartsBeforeTimestamp()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanCheckWhetherSpanStartsBeforeTimestamp($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
         $datetime = new DateTimeImmutable('11:00');
         $timestamp = $datetime->getTimestamp();
 
         $this->assertTrue($span->startsBefore($timestamp));
     }
 
-    public function testCanCheckWhetherSpanEndsAfterTimestamp()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanCheckWhetherSpanEndsAfterTimestamp($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
         $datetime = new DateTimeImmutable('07:00');
         $timestamp = $datetime->getTimestamp();
 
         $this->assertTrue($span->endsAfter($timestamp));
     }
 
-    public function testCanCheckWhetherSpanEndsBeforeTimestamp()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanCheckWhetherSpanEndsBeforeTimestamp($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
         $datetime = new DateTimeImmutable('13:00');
         $timestamp = $datetime->getTimestamp();
 
         $this->assertTrue($span->endsBefore($timestamp));
     }
 
-    public function testCanBeSplittedByTimestamp()
+    /**
+     * @dataProvider provideDateTime
+     */
+    public function testCanBeSplittedByTimestamp($start, $end)
     {
-        $start = new DateTimeImmutable('09:00');
-        $end = new DateTimeImmutable('10:00');
         $half = ($start->getTimestamp() + $end->getTimestamp()) / 2;
 
         $span = Span::fromDateTime($start, $end);
@@ -236,14 +244,12 @@ class SpanTest extends TestCase
         $this->assertEquals($end->getTimestamp(), $parts[1]->getEnd());
     }
 
-    public function testCanBeSplittedToEqualParts()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanBeSplittedToEqualParts($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
-        foreach ([2, 3, 5, 7, 10] as $count) {
+        foreach ([2, 4, 6, 8, 10] as $count) {
             $parts = $span->splitParts($count);
             $this->assertCount($count, $parts);
             $this->assertEquals($span->getStart(), $parts[0]->getStart());
@@ -251,13 +257,11 @@ class SpanTest extends TestCase
         }
     }
 
-    public function testCanBeSplittedAndMergedBack()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanBeSplittedAndMergedBack($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
         foreach ([2, 4, 6, 8, 10] as $count) {
             $parts = $span->splitParts($count);
 
@@ -271,13 +275,11 @@ class SpanTest extends TestCase
         }
     }
 
-    public function testCanCheckWhetherSpanContainsParticularTimestamp()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanCheckWhetherSpanContainsParticularTimestamp($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
-
         $half = ($span->getStart() + $span->getEnd()) / 2;
 
         $this->assertTrue($span->contains($span->getStart()));
@@ -285,24 +287,21 @@ class SpanTest extends TestCase
         $this->assertTrue($span->contains($half));
     }
 
-    public function testThrowsExceptionWhenTimestampIsNotInSpanWhenSplittingByTimestamp() {
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testThrowsExceptionWhenTimestampIsNotInSpanWhenSplittingByTimestamp($span)
+    {
         $this->expectException(InvalidArgumentException::class);
-
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('10:00')
-        );
 
         $span->splitTimestamp($span->getStart() - 100);
     }
 
-    public function testCanGetMiddleTimestamp()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanGetMiddleTimestamp($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
-
         $middle = new DateTimeImmutable('10:00');
 
         $this->assertSame($middle->getTimestamp(), $span->getMiddle());
@@ -333,25 +332,22 @@ class SpanTest extends TestCase
         $this->assertSame(2.5, Span::make(10, 20)->getFractionDuration(4));
     }
 
-    public function testCanBeConvertedToPrimitives()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanBeConvertedToPrimitives($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
-
         list($start, $end) = $span->toPrimitives();
 
         $this->assertSame($span->getStart(), $start);
         $this->assertSame($span->getEnd(), $end);
     }
 
-    public function testCanAddOffset()
+    /**
+     * @dataProvider provideSpan
+     */
+    public function testCanAddOffset($span)
     {
-        $span = Span::fromDateTime(
-            new DateTimeImmutable('09:00'),
-            new DateTimeImmutable('11:00')
-        );
         $offset = 3600;
         $result = $span->offset($offset);
 
