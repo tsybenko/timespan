@@ -202,15 +202,24 @@ class Span implements SpanInterface
     /**
      * Returns a new span as a result of the merging of current and passed spans
      *
-     * @param Span $span
+     * @param Span ...$spans
      * @return Span
      */
-    public function merge(self $span): static
+    public function merge(self ...$spans): static
     {
-        return static::make(
-            min($this->start, $span->getStart()),
-            max($this->end, $span->getEnd())
-        );
+        if (empty($spans)) {
+            throw new InvalidArgumentException('Must be at least 1 item passed');
+        }
+
+        $start = 0;
+        $end = 0;
+
+        foreach ($spans as $span) {
+            $start = min($this->start, $span->getStart());
+            $end = max($this->end, $span->getEnd());
+        }
+
+        return static::make($start, $end);
     }
 
     public function startsAfter(int $timestamp): bool

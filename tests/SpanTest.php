@@ -251,6 +251,26 @@ class SpanTest extends TestCase
         }
     }
 
+    public function testCanBeSplittedAndMergedBack()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('10:00')
+        );
+
+        foreach ([2, 4, 6, 8, 10] as $count) {
+            $parts = $span->splitParts($count);
+
+            /** @var Span $firstPart */
+            $firstPart = array_shift($parts);
+
+            $result = $firstPart->merge(...$parts);
+
+            $this->assertSame($span->getStart(), $result->getStart());
+            $this->assertSame($span->getEnd(), $result->getEnd());
+        }
+    }
+
     public function testCanCheckWhetherSpanContainsParticularTimestamp()
     {
         $span = Span::fromDateTime(
