@@ -346,4 +346,18 @@ class SpanTest extends TestCase
         $this->assertSame($span->getEnd(), $end);
     }
 
+    public function testCanAddOffset()
+    {
+        $span = Span::fromDateTime(
+            new DateTimeImmutable('09:00'),
+            new DateTimeImmutable('11:00')
+        );
+        $offset = 3600;
+        $result = $span->offset($offset);
+
+        $this->assertNotSame($span, $result);
+        $this->assertSame($span->getStart() + $offset, $result->getStart());
+        $this->assertSame($span->getEnd() + $offset, $result->getEnd());
+    }
+
 }

@@ -222,6 +222,14 @@ class Span implements SpanInterface
         return static::make($start, $end);
     }
 
+    public function offset(int $size): self
+    {
+        return static::make(
+            $this->start + $size,
+            $this->end + $size
+        );
+    }
+
     public function startsAfter(int $timestamp): bool
     {
         return $this->start > $timestamp;
