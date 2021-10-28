@@ -39,8 +39,8 @@ class Span implements SpanInterface
      */
     public function toDatePeriod(DateInterval $interval): DatePeriod
     {
-        $start = new DateTimeImmutable(strtotime($this->start));
-        $end = new DateTimeImmutable(strtotime($this->end));
+        $start = (new DateTimeImmutable())->setTimestamp($this->start);
+        $end = (new DateTimeImmutable())->setTimestamp($this->end);
 
         return new DatePeriod($start, $interval, $end);
     }
