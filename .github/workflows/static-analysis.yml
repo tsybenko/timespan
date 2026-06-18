@@ -22,4 +22,4 @@ jobs:
       - name: Run PHP CS Fixer
         run: vendor/bin/php-cs-fixer check
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse src/ tests/ --no-progress
