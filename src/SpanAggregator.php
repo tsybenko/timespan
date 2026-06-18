@@ -2,8 +2,6 @@
 
 namespace Tsybenko\TimeSpan;
 
-use Generator;
-
 class SpanAggregator
 {
     protected Span $span;
@@ -15,6 +13,7 @@ class SpanAggregator
 
     /**
      * @param Span[] $spans
+     *
      * @return Span[]
      */
     public static function sort(array $spans): array
@@ -28,7 +27,7 @@ class SpanAggregator
         return $spans;
     }
 
-    public function iterateGaps(Span ...$spans): Generator
+    public function iterateGaps(Span ...$spans): \Generator
     {
         foreach ($spans as $span) {
             yield $this->span->gap($span);
@@ -37,8 +36,9 @@ class SpanAggregator
 
     public static function sumDurations(Span ...$spans): int
     {
-        return array_reduce($spans, function($sum, Span $span) {
+        return array_reduce($spans, function ($sum, Span $span) {
             $sum += $span->getDuration();
+
             return $sum;
         }, 0);
     }
@@ -47,8 +47,10 @@ class SpanAggregator
     {
         $sum = 0;
 
-        for ($i = 0; $i < count($spans) - 1; $i++) {
-            if (! isset($spans[$i + 1])) break;
+        for ($i = 0; $i < count($spans) - 1; ++$i) {
+            if (!isset($spans[$i + 1])) {
+                break;
+            }
 
             $currentSpan = $spans[$i];
             $nextSpan = $spans[$i + 1];
@@ -61,6 +63,7 @@ class SpanAggregator
 
     /**
      * @param Span[] $spans
+     *
      * @return Span[]
      */
     public static function findBetween(Span $a, Span $b, array $spans): array
@@ -68,7 +71,9 @@ class SpanAggregator
         $items = [];
 
         foreach ($spans as $span) {
-            if (static::isNotBetween($a, $b, $span)) continue;
+            if (static::isNotBetween($a, $b, $span)) {
+                continue;
+            }
 
             $items[] = $span;
         }
@@ -80,13 +85,17 @@ class SpanAggregator
     {
         $candidate = $spans[0];
 
-        if (count($spans) === 1) return $candidate;
+        if (1 === count($spans)) {
+            return $candidate;
+        }
 
         // Iterate from the next index for better performance
-        for ($i = 1; $i < count($spans); $i++) {
+        for ($i = 1; $i < count($spans); ++$i) {
             $span = $spans[$i];
 
-            if ($candidate->getDuration() > $span->getDuration()) continue;
+            if ($candidate->getDuration() > $span->getDuration()) {
+                continue;
+            }
 
             $candidate = $span;
         }
@@ -101,7 +110,6 @@ class SpanAggregator
 
     public static function isNotBetween(Span $a, Span $b, Span $target): bool
     {
-        return ! static::isBetween($a, $b, $target);
+        return !static::isBetween($a, $b, $target);
     }
-
 }

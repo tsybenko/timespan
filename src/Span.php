@@ -2,13 +2,6 @@
 
 namespace Tsybenko\TimeSpan;
 
-use DateInterval;
-use DatePeriod;
-use DateTimeImmutable;
-use DateTimeInterface;
-use Exception;
-use InvalidArgumentException;
-
 class Span implements SpanInterface
 {
     protected int $start;
@@ -17,36 +10,65 @@ class Span implements SpanInterface
     public function __construct(int $start, int $end)
     {
         if ($start > $end) {
-            throw new InvalidArgumentException('The "end" value cannot be less than the "start" value');
+            throw new \InvalidArgumentException(
+                'The "end" value cannot be less than the "start" value',
+            );
         }
 
         $this->start = $start;
         $this->end = $end;
     }
 
-    public static function make(int $start, int $end): static
+    public function __toString(): string
     {
-        return new static($start, $end);
-    }
-
-    public static function fromDateTime(DateTimeInterface $start, DateTimeInterface $end): static
-    {
-        return new static($start->getTimestamp(), $end->getTimestamp());
+        return $this->toString();
     }
 
     /**
-     * @throws Exception
+     * @return array{start: int, end: int}
      */
-    public function toDatePeriod(DateInterval $interval): DatePeriod
+    public function __serialize(): array
     {
-        $start = (new DateTimeImmutable())->setTimestamp($this->start);
-        $end = (new DateTimeImmutable())->setTimestamp($this->end);
-
-        return new DatePeriod($start, $interval, $end);
+        return [
+            'start' => $this->start,
+            'end' => $this->end,
+        ];
     }
 
     /**
-     * Returns array representation of the span
+     * @param array{start: int, end: int} $data
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->start = $data['start'];
+        $this->end = $data['end'];
+    }
+
+    public static function make(int $start, int $end): self
+    {
+        return new self($start, $end);
+    }
+
+    public static function fromDateTime(
+        \DateTimeInterface $start,
+        \DateTimeInterface $end,
+    ): self {
+        return new self($start->getTimestamp(), $end->getTimestamp());
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function toDatePeriod(\DateInterval $interval): \DatePeriod
+    {
+        $start = new \DateTimeImmutable()->setTimestamp($this->start);
+        $end = new \DateTimeImmutable()->setTimestamp($this->end);
+
+        return new \DatePeriod($start, $interval, $end);
+    }
+
+    /**
+     * Returns array representation of the span.
      *
      * @return array{start: int, end: int}
      */
@@ -59,7 +81,7 @@ class Span implements SpanInterface
     }
 
     /**
-     * Returns array of main primitives: start, end
+     * Returns array of main primitives: start, end.
      *
      * @return array{0: int, 1: int}
      */
@@ -78,7 +100,7 @@ class Span implements SpanInterface
         return sprintf(
             '%s -> %s',
             date('H:i d.m.Y', $this->start),
-            date('H:i d.m.Y', $this->end)
+            date('H:i d.m.Y', $this->end),
         );
     }
 
@@ -103,15 +125,14 @@ class Span implements SpanInterface
     }
 
     /**
-     * Returns duration of one fraction after dividing the span in $fractions count
-     *
-     * @param int $fractions
-     * @return float
+     * Returns duration of one fraction after dividing the span in $fractions count.
      */
     public function getFractionDuration(int $fractions): float
     {
         if ($fractions < 0) {
-            throw new InvalidArgumentException('Fractions amount must be an unsigned integer');
+            throw new \InvalidArgumentException(
+                'Fractions amount must be a positive number',
+            );
         }
 
         return $this->getDuration() / $fractions;
@@ -119,7 +140,10 @@ class Span implements SpanInterface
 
     public function gap(SpanInterface $span): int
     {
-        if ($this->start === $span->getStart() && $this->end === $span->getEnd()) {
+        if (
+            $this->start === $span->getStart()
+            && $this->end === $span->getEnd()
+        ) {
             return 0;
         }
 
@@ -144,45 +168,43 @@ class Span implements SpanInterface
             : $this->start <= $span->getEnd();
     }
 
-    /**
-     * @param int $timestamp
-     * @return bool
-     */
     public function contains(int $timestamp): bool
     {
         return $this->start <= $timestamp && $this->end >= $timestamp;
     }
 
     /**
-     * @param int $timestamp
      * @return Span[]
      */
     public function splitTimestamp(int $timestamp): array
     {
-        if (! $this->contains($timestamp)) {
-            throw new InvalidArgumentException("The span does not contain the passed timestamp");
+        if (!$this->contains($timestamp)) {
+            throw new \InvalidArgumentException(
+                'The span does not contain the passed timestamp',
+            );
         }
 
         return [
             static::make($this->start, $timestamp),
-            static::make($timestamp, $this->end)
+            static::make($timestamp, $this->end),
         ];
     }
 
     /**
-     * Returns array of parts (spans) the span was splitted into
+     * Returns array of parts (spans) the span was splitted into.
      *
      * Warning!
      * Splitting of the span into odd amount of parts is not an accurate operation
      * because of float to integer type conversion
      *
-     * @param int $count
      * @return Span[]
      */
     public function splitParts(int $count): array
     {
         if ($count < 2) {
-            throw new InvalidArgumentException('Cannot split a span into less than 2 parts');
+            throw new \InvalidArgumentException(
+                'Cannot split a span into less than 2 parts',
+            );
         }
 
         $start = $this->start;
@@ -200,15 +222,16 @@ class Span implements SpanInterface
     }
 
     /**
-     * Returns a new span as a result of the merging of current and passed spans
+     * Returns a new span as a result of the merging of current and passed spans.
      *
-     * @param Span ...$spans
      * @return Span
      */
     public function merge(self ...$spans): static
     {
         if (empty($spans)) {
-            throw new InvalidArgumentException('Must be at least 1 item passed');
+            throw new \InvalidArgumentException(
+                'Must be at least 1 item passed',
+            );
         }
 
         $start = 0;
@@ -224,10 +247,7 @@ class Span implements SpanInterface
 
     public function offset(int $size): self
     {
-        return static::make(
-            $this->start + $size,
-            $this->end + $size
-        );
+        return static::make($this->start + $size, $this->end + $size);
     }
 
     public function startsAfter(int $timestamp): bool
@@ -248,24 +268,5 @@ class Span implements SpanInterface
     public function endsBefore(int $timestamp): bool
     {
         return $this->end < $timestamp;
-    }
-
-    public function __toString(): string
-    {
-        return $this->toString();
-    }
-
-    public function __serialize(): array
-    {
-        return [
-            'start' => $this->start,
-            'end' => $this->end,
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->start = $data['start'];
-        $this->end = $data['end'];
     }
 }

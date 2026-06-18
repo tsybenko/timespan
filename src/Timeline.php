@@ -11,9 +11,7 @@ class Timeline
     protected array $spans = [];
 
     /**
-     * Returns starting timestamp of the timeline
-     *
-     * @return int
+     * Returns starting timestamp of the timeline.
      */
     public function getStart(): int
     {
@@ -21,9 +19,7 @@ class Timeline
     }
 
     /**
-     * Returns ending timestamp of the timeline
-     *
-     * @return int
+     * Returns ending timestamp of the timeline.
      */
     public function getEnd(): int
     {
@@ -31,7 +27,7 @@ class Timeline
     }
 
     /**
-     * Returns spans of the timeline
+     * Returns spans of the timeline.
      *
      * @return Span[]
      */
@@ -41,20 +37,19 @@ class Timeline
     }
 
     /**
-     * Adds a span on the timeline
+     * Adds a span on the timeline.
      *
-     * @param Span $span
      * @return Span[]
      */
     public function add(Span $span)
     {
         $this->spans[] = $span;
 
-        if ($this->start === 0 || $this->start > $span->getStart()) {
+        if (0 === $this->start || $this->start > $span->getStart()) {
             $this->start = $span->getStart();
         }
 
-        if ($this->end === 0 || $this->end < $span->getEnd()) {
+        if (0 === $this->end || $this->end < $span->getEnd()) {
             $this->end = $span->getEnd();
         }
 
@@ -62,9 +57,7 @@ class Timeline
     }
 
     /**
-     * Returns duration of the timeline
-     *
-     * @return int
+     * Returns duration of the timeline.
      */
     public function getDuration(): int
     {
@@ -72,24 +65,10 @@ class Timeline
     }
 
     /**
-     * Resets start and end of the timeline
-     */
-    protected function resetStartAndEnd(): void
-    {
-        foreach ($this->spans as $span) {
-            if ($this->start === 0 || $this->start > $span->getStart()) {
-                $this->start = $span->getStart();
-            }
-            if ($this->end === 0 || $this->end < $span->getEnd()) {
-                $this->end = $span->getEnd();
-            }
-        }
-    }
-
-    /**
-     * Returns array of merged spans of passed timelines
+     * Returns array of merged spans of passed timelines.
      *
      * @param static ...$timelines
+     *
      * @return Span[]
      */
     public static function mergeSpans(self ...$timelines): array
@@ -106,14 +85,11 @@ class Timeline
 
     /**
      * Returns a new Timeline by merging current timeline with passed timelines.
-     *
-     * @param Timeline ...$timelines
-     * @return static
      */
-    public function merge(self ...$timelines): static
+    public function merge(self ...$timelines): self
     {
-        $timeline = new static();
-        $spans = static::mergeSpans(...$timelines);
+        $timeline = new self();
+        $spans = self::mergeSpans(...$timelines);
 
         foreach ($spans as $span) {
             $timeline->add($span);
@@ -123,19 +99,17 @@ class Timeline
     }
 
     /**
-     * Returns a new Timeline pre-filled with generated spans, starting from $start
-     *
-     * @param int $start
-     * @param int $duration
-     * @param int $amount
-     * @param int $gap
-     * @return static
+     * Returns a new Timeline pre-filled with generated spans, starting from $start.
      */
-    public static function generateFrom(int $start, int $duration, int $amount = 1, int $gap = 0): static
-    {
-        $timeline = new static();
+    public static function generateFrom(
+        int $start,
+        int $duration,
+        int $amount = 1,
+        int $gap = 0,
+    ): self {
+        $timeline = new self();
 
-        for ($i = 0; $i < $amount; $i++) {
+        for ($i = 0; $i < $amount; ++$i) {
             $span = new Span($start, $start + $duration);
             $timeline->add($span);
             $start += $duration + $gap;
@@ -145,24 +119,37 @@ class Timeline
     }
 
     /**
-     * Returns a new Timeline pre-filled with generated spans, ending from $end
-     *
-     * @param int $end
-     * @param int $duration
-     * @param int $amount
-     * @param int $gap
-     * @return static
+     * Returns a new Timeline pre-filled with generated spans, ending from $end.
      */
-    public static function generateTo(int $end, int $duration, int $amount = 1, int $gap = 0): static
-    {
-        $timeline = new static();
+    public static function generateTo(
+        int $end,
+        int $duration,
+        int $amount = 1,
+        int $gap = 0,
+    ): self {
+        $timeline = new self();
 
-        for ($i = $amount; $i > 0; $i--) {
+        for ($i = $amount; $i > 0; --$i) {
             $span = new Span($end - $duration, $end);
             $timeline->add($span);
             $end -= $duration + $gap;
         }
 
         return $timeline;
+    }
+
+    /**
+     * Resets start and end of the timeline.
+     */
+    protected function resetStartAndEnd(): void
+    {
+        foreach ($this->spans as $span) {
+            if (0 === $this->start || $this->start > $span->getStart()) {
+                $this->start = $span->getStart();
+            }
+            if (0 === $this->end || $this->end < $span->getEnd()) {
+                $this->end = $span->getEnd();
+            }
+        }
     }
 }
