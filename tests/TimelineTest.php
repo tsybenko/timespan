@@ -1,9 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Tsybenko\TimeSpan\Span;
 use Tsybenko\TimeSpan\Timeline;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class TimelineTest extends TestCase
 {
     public function testCanGetDuration()
@@ -20,7 +27,7 @@ class TimelineTest extends TestCase
     {
         $timeline = new Timeline();
 
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < 3; ++$i) {
             $span = $this->createMock(Span::class);
             $timeline->add($span);
         }

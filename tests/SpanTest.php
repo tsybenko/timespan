@@ -1,39 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Tsybenko\TimeSpan\Span;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class SpanTest extends TestCase
 {
     public function getTimestamp(): int
     {
         return 1635368400;
-    }
-
-    public function provideDateTime()
-    {
-        return [
-            [
-                new DateTimeImmutable('09:00'),
-                new DateTimeImmutable('11:00')
-            ]
-        ];
-    }
-
-    /**
-     * @return Span[]
-     */
-    public function provideSpan(): array
-    {
-//        $ts = $this->getTimestamp();
-//        return Span::make($ts, $ts + 7200);
-
-        $start = new DateTimeImmutable('09:00');
-        $end = new DateTimeImmutable('11:00');
-
-        return [
-            [Span::fromDateTime($start, $end)]
-        ];
     }
 
     public function testThrowsExceptionWhenEndLessThanStart()
@@ -48,6 +29,9 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
+     *
+     * @param mixed $start
+     * @param mixed $end
      */
     public function testCanBeCreatedFromTimestamp($start, $end)
     {
@@ -62,6 +46,9 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
+     *
+     * @param mixed $start
+     * @param mixed $end
      */
     public function testCanBeCreatedFromStaticConstructor($start, $end)
     {
@@ -76,6 +63,9 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
+     *
+     * @param mixed $start
+     * @param mixed $end
      */
     public function testCanBeCreatedFromDatetime($start, $end)
     {
@@ -87,7 +77,10 @@ class SpanTest extends TestCase
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     *
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanCalculateDuration($span)
     {
@@ -96,7 +89,10 @@ class SpanTest extends TestCase
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     *
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanBeConvertedToDatePeriod($span)
     {
@@ -107,7 +103,10 @@ class SpanTest extends TestCase
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     *
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanBeConvertedToArray($span)
     {
@@ -120,7 +119,10 @@ class SpanTest extends TestCase
 
     /**
      * @depends testCanBeCreatedFromDatetime
+     *
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanBeConvertedToJson($span)
     {
@@ -187,6 +189,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanCheckWhetherSpanStartsAfterTimestamp($span)
     {
@@ -198,6 +202,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanCheckWhetherSpanStartsBeforeTimestamp($span)
     {
@@ -209,6 +215,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanCheckWhetherSpanEndsAfterTimestamp($span)
     {
@@ -220,6 +228,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanCheckWhetherSpanEndsBeforeTimestamp($span)
     {
@@ -231,6 +241,9 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
+     *
+     * @param mixed $start
+     * @param mixed $end
      */
     public function testCanBeSplittedByTimestamp($start, $end)
     {
@@ -244,8 +257,20 @@ class SpanTest extends TestCase
         $this->assertEquals($end->getTimestamp(), $parts[1]->getEnd());
     }
 
+    public function provideDateTime()
+    {
+        return [
+            [
+                new DateTimeImmutable('09:00'),
+                new DateTimeImmutable('11:00'),
+            ],
+        ];
+    }
+
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanBeSplittedToEqualParts($span)
     {
@@ -259,6 +284,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanBeSplittedAndMergedBack($span)
     {
@@ -277,6 +304,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanCheckWhetherSpanContainsParticularTimestamp($span)
     {
@@ -289,6 +318,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testThrowsExceptionWhenTimestampIsNotInSpanWhenSplittingByTimestamp($span)
     {
@@ -299,13 +330,14 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanGetMiddleTimestamp($span)
     {
         $middle = new DateTimeImmutable('10:00');
 
         $this->assertSame($middle->getTimestamp(), $span->getMiddle());
-
     }
 
     public function testCanBeMerged()
@@ -334,10 +366,12 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanBeConvertedToPrimitives($span)
     {
-        list($start, $end) = $span->toPrimitives();
+        [$start, $end] = $span->toPrimitives();
 
         $this->assertSame($span->getStart(), $start);
         $this->assertSame($span->getEnd(), $end);
@@ -345,6 +379,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
+     *
+     * @param mixed $span
      */
     public function testCanAddOffset($span)
     {
@@ -356,4 +392,19 @@ class SpanTest extends TestCase
         $this->assertSame($span->getEnd() + $offset, $result->getEnd());
     }
 
+    /**
+     * @return Span[]
+     */
+    public function provideSpan(): array
+    {
+        //        $ts = $this->getTimestamp();
+        //        return Span::make($ts, $ts + 7200);
+
+        $start = new DateTimeImmutable('09:00');
+        $end = new DateTimeImmutable('11:00');
+
+        return [
+            [Span::fromDateTime($start, $end)],
+        ];
+    }
 }

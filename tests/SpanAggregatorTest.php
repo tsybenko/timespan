@@ -1,9 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use Tsybenko\TimeSpan\Span;
 use Tsybenko\TimeSpan\SpanAggregator;
 
+/**
+ * @internal
+ *
+ * @coversNothing
+ */
 class SpanAggregatorTest extends TestCase
 {
     public function testCanIterateGaps()
@@ -148,5 +155,4 @@ class SpanAggregatorTest extends TestCase
 
         $this->assertTrue(SpanAggregator::isBetween($a, $b, $target));
     }
-
 }
