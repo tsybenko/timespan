@@ -54,7 +54,7 @@ class SpanTest extends TestCase
     {
         $this->assertInstanceOf(
             Span::class,
-            Span::make(
+            Span::fromTimestamp(
                 $start->getTimestamp(),
                 $end->getTimestamp()
             )
@@ -250,7 +250,7 @@ class SpanTest extends TestCase
         $half = ($start->getTimestamp() + $end->getTimestamp()) / 2;
 
         $span = Span::fromDateTime($start, $end);
-        $parts = $span->splitTimestamp($half);
+        $parts = $span->splitByTimestamp($half);
 
         $this->assertCount(2, $parts);
         $this->assertEquals($start->getTimestamp(), $parts[0]->getStart());
@@ -360,8 +360,8 @@ class SpanTest extends TestCase
 
     public function testCanGetFractionDuration()
     {
-        $this->assertSame(10.0, Span::make(0, 20)->getFractionDuration(2));
-        $this->assertSame(2.5, Span::make(10, 20)->getFractionDuration(4));
+        $this->assertSame(10.0, Span::fromTimestamp(0, 20)->getFractionDuration(2));
+        $this->assertSame(2.5, Span::fromTimestamp(10, 20)->getFractionDuration(4));
     }
 
     /**

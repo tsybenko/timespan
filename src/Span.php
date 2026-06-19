@@ -44,7 +44,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
         $this->end = $data['end'];
     }
 
-    public static function make(int $start, int $end): self
+    public static function fromTimestamp(int $start, int $end): self
     {
         return new self($start, $end);
     }
@@ -54,6 +54,11 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
         \DateTimeInterface $end,
     ): self {
         return new self($start->getTimestamp(), $end->getTimestamp());
+    }
+
+    public function cloneWithOffset(int $size): self
+    {
+        return static::fromTimestamp($this->start + $size, $this->end + $size);
     }
 
     /**
@@ -85,7 +90,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
      *
      * @return array{0: int, 1: int}
      */
-    public function toPrimitives(): array
+    public function toScalarArray(): array
     {
         return [$this->start, $this->end];
     }
@@ -176,7 +181,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
     /**
      * @return Span[]
      */
-    public function splitTimestamp(int $timestamp): array
+    public function splitByTimestamp(int $timestamp): array
     {
         if (!$this->contains($timestamp)) {
             throw new \InvalidArgumentException(
@@ -185,8 +190,8 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
         }
 
         return [
-            static::make($this->start, $timestamp),
-            static::make($timestamp, $this->end),
+            self::fromTimestamp($this->start, $timestamp),
+            self::fromTimestamp($timestamp, $this->end),
         ];
     }
 
@@ -214,7 +219,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
 
         while (count($parts) < $count) {
             $end = $start + $fractionDuration;
-            $parts[] = static::make($start, $end);
+            $parts[] = self::fromTimestamp($start, $end);
             $start = $end;
         }
 
@@ -242,12 +247,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
             $end = max($this->end, $span->getEnd());
         }
 
-        return static::make($start, $end);
-    }
-
-    public function offset(int $size): self
-    {
-        return static::make($this->start + $size, $this->end + $size);
+        return static::fromTimestamp($start, $end);
     }
 
     public function startsAfter(int $timestamp): bool
