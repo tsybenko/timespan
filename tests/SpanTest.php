@@ -29,11 +29,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
-     *
-     * @param mixed $start
-     * @param mixed $end
      */
-    public function testCanBeCreatedFromTimestamp($start, $end)
+    public function testCanBeCreatedFromTimestamp(DateTimeImmutable $start, DateTimeImmutable $end)
     {
         $this->assertInstanceOf(
             Span::class,
@@ -46,11 +43,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
-     *
-     * @param mixed $start
-     * @param mixed $end
      */
-    public function testCanBeCreatedFromStaticConstructor($start, $end)
+    public function testCanBeCreatedFromStaticConstructor(DateTimeImmutable $start, DateTimeImmutable $end)
     {
         $this->assertInstanceOf(
             Span::class,
@@ -67,7 +61,7 @@ class SpanTest extends TestCase
      * @param mixed $start
      * @param mixed $end
      */
-    public function testCanBeCreatedFromDatetime($start, $end)
+    public function testCanBeCreatedFromDatetime(DateTimeImmutable $start, DateTimeImmutable $end)
     {
         $this->assertInstanceOf(
             Span::class,
@@ -79,10 +73,8 @@ class SpanTest extends TestCase
      * @depends testCanBeCreatedFromDatetime
      *
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanCalculateDuration($span)
+    public function testCanCalculateDuration(Span $span)
     {
         $this->assertSame(7200, $span->getDuration());
     }
@@ -91,10 +83,8 @@ class SpanTest extends TestCase
      * @depends testCanBeCreatedFromDatetime
      *
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanBeConvertedToDatePeriod($span)
+    public function testCanBeConvertedToDatePeriod(Span $span)
     {
         $interval = new DateInterval('PT1H');
 
@@ -105,10 +95,8 @@ class SpanTest extends TestCase
      * @depends testCanBeCreatedFromDatetime
      *
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanBeConvertedToArray($span)
+    public function testCanBeConvertedToArray(Span $span)
     {
         $arr = $span->toArray();
 
@@ -121,10 +109,8 @@ class SpanTest extends TestCase
      * @depends testCanBeCreatedFromDatetime
      *
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanBeConvertedToJson($span)
+    public function testCanBeConvertedToJson(Span $span)
     {
         $this->assertJson($span->toJson());
     }
@@ -189,10 +175,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanCheckWhetherSpanStartsAfterTimestamp($span)
+    public function testCanCheckWhetherSpanStartsAfterTimestamp(Span $span)
     {
         $datetime = new DateTimeImmutable('08:00');
         $timestamp = $datetime->getTimestamp();
@@ -202,10 +186,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanCheckWhetherSpanStartsBeforeTimestamp($span)
+    public function testCanCheckWhetherSpanStartsBeforeTimestamp(Span $span)
     {
         $datetime = new DateTimeImmutable('11:00');
         $timestamp = $datetime->getTimestamp();
@@ -215,10 +197,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanCheckWhetherSpanEndsAfterTimestamp($span)
+    public function testCanCheckWhetherSpanEndsAfterTimestamp(Span $span)
     {
         $datetime = new DateTimeImmutable('07:00');
         $timestamp = $datetime->getTimestamp();
@@ -228,10 +208,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanCheckWhetherSpanEndsBeforeTimestamp($span)
+    public function testCanCheckWhetherSpanEndsBeforeTimestamp(Span $span)
     {
         $datetime = new DateTimeImmutable('13:00');
         $timestamp = $datetime->getTimestamp();
@@ -241,11 +219,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideDateTime
-     *
-     * @param mixed $start
-     * @param mixed $end
      */
-    public function testCanBeSplittedByTimestamp($start, $end)
+    public function testCanBeSplittedByTimestamp(DateTimeImmutable $start, DateTimeImmutable $end)
     {
         $half = ($start->getTimestamp() + $end->getTimestamp()) / 2;
 
@@ -257,7 +232,10 @@ class SpanTest extends TestCase
         $this->assertEquals($end->getTimestamp(), $parts[1]->getEnd());
     }
 
-    public function provideDateTime()
+    /**
+     * @return array<int, array<int, DateTimeImmutable>>
+     */
+    public function provideDateTime(): array
     {
         return [
             [
@@ -269,10 +247,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanBeSplittedToEqualParts($span)
+    public function testCanBeSplittedToEqualParts(Span $span)
     {
         foreach ([2, 4, 6, 8, 10] as $count) {
             $parts = $span->splitParts($count);
@@ -284,10 +260,8 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanBeSplittedAndMergedBack($span)
+    public function testCanBeSplittedAndMergedBack(Span $span)
     {
         foreach ([2, 4, 6, 8, 10] as $count) {
             $parts = $span->splitParts($count);
@@ -307,7 +281,7 @@ class SpanTest extends TestCase
      *
      * @param mixed $span
      */
-    public function testCanCheckWhetherSpanContainsParticularTimestamp($span)
+    public function testCanCheckWhetherSpanContainsParticularTimestamp(Span $span)
     {
         $half = ($span->getStart() + $span->getEnd()) / 2;
 
@@ -318,14 +292,12 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testThrowsExceptionWhenTimestampIsNotInSpanWhenSplittingByTimestamp($span)
+    public function testThrowsExceptionWhenTimestampIsNotInSpanWhenSplittingByTimestamp(Span $span)
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $span->splitTimestamp($span->getStart() - 100);
+        $span->splitByTimestamp($span->getStart() - 100);
     }
 
     /**
@@ -333,7 +305,7 @@ class SpanTest extends TestCase
      *
      * @param mixed $span
      */
-    public function testCanGetMiddleTimestamp($span)
+    public function testCanGetMiddleTimestamp(Span $span)
     {
         $middle = new DateTimeImmutable('10:00');
 
@@ -366,12 +338,10 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanBeConvertedToPrimitives($span)
+    public function testCanBeConvertedToPrimitives(Span $span)
     {
-        [$start, $end] = $span->toPrimitives();
+        [$start, $end] = $span->toScalarArray();
 
         $this->assertSame($span->getStart(), $start);
         $this->assertSame($span->getEnd(), $end);
@@ -379,13 +349,11 @@ class SpanTest extends TestCase
 
     /**
      * @dataProvider provideSpan
-     *
-     * @param mixed $span
      */
-    public function testCanAddOffset($span)
+    public function testCanCloneSpanWithOffset(Span $span)
     {
         $offset = 3600;
-        $result = $span->offset($offset);
+        $result = $span->cloneWithOffset($offset);
 
         $this->assertNotSame($span, $result);
         $this->assertSame($span->getStart() + $offset, $result->getStart());
