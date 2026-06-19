@@ -95,6 +95,14 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
         return [$this->start, $this->end];
     }
 
+    public function toDateTimeImmutableArray(): array
+    {
+        return [
+            new \DateTimeImmutable()->setTimestamp($this->start),
+            new \DateTimeImmutable()->setTimestamp($this->end),
+        ];
+    }
+
     public function toJson(): string
     {
         return json_encode($this->toArray());
