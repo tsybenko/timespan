@@ -2,7 +2,7 @@
 
 namespace Tsybenko\TimeSpan;
 
-class Span implements SpanInterface
+class Span implements HasStart, HasEnd, HasDuration, \Stringable
 {
     protected int $start;
     protected int $end;
@@ -138,34 +138,34 @@ class Span implements SpanInterface
         return $this->getDuration() / $fractions;
     }
 
-    public function gap(SpanInterface $span): int
+    public function gap(HasEnd&HasStart $other): int
     {
         if (
-            $this->start === $span->getStart()
-            && $this->end === $span->getEnd()
+            $this->start === $other->getStart()
+            && $this->end === $other->getEnd()
         ) {
             return 0;
         }
 
-        if ($this->overlaps($span)) {
+        if ($this->overlaps($other)) {
             return 0;
         }
 
-        return $this->start > $span->getStart()
-            ? $this->start - $span->getEnd()
-            : $span->getStart() - $this->end;
+        return $this->start > $other->getStart()
+            ? $this->start - $other->getEnd()
+            : $other->getStart() - $this->end;
     }
 
-    public function hasGap(SpanInterface $span): bool
+    public function hasGap(HasEnd&HasStart $other): bool
     {
-        return $this->gap($span) > 0;
+        return $this->gap($other) > 0;
     }
 
-    public function overlaps(SpanInterface $span): bool
+    public function overlaps(HasEnd&HasStart $other): bool
     {
-        return $this->start < $span->getStart()
-            ? $span->getStart() <= $this->end
-            : $this->start <= $span->getEnd();
+        return $this->start < $other->getStart()
+            ? $other->getStart() <= $this->end
+            : $this->start <= $other->getEnd();
     }
 
     public function contains(int $timestamp): bool
