@@ -285,9 +285,9 @@ class SpanTest extends TestCase
     {
         $half = ($span->getStart() + $span->getEnd()) / 2;
 
-        $this->assertTrue($span->contains($span->getStart()));
-        $this->assertTrue($span->contains($span->getEnd()));
-        $this->assertTrue($span->contains($half));
+        $this->assertTrue($span->containsTimestamp($span->getStart()));
+        $this->assertTrue($span->containsTimestamp($span->getEnd()));
+        $this->assertTrue($span->containsTimestamp($half));
     }
 
     /**

@@ -181,7 +181,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
             : $this->start <= $other->getEnd();
     }
 
-    public function contains(int $timestamp): bool
+    public function containsTimestamp(int $timestamp): bool
     {
         return $this->start <= $timestamp && $this->end >= $timestamp;
     }
@@ -191,7 +191,7 @@ class Span implements HasStart, HasEnd, HasDuration, \Stringable
      */
     public function splitByTimestamp(int $timestamp): array
     {
-        if (!$this->contains($timestamp)) {
+        if (!$this->containsTimestamp($timestamp)) {
             throw new \InvalidArgumentException(
                 'The span does not contain the passed timestamp',
             );
